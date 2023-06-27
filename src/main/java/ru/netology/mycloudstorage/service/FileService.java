@@ -14,23 +14,23 @@ public class FileService {
         this.fileRepository = fileRepository;
     }
 
-    public ResponseEntity getList(int limit) {
+    public ResponseEntity<Object> getList(int limit) {
         return fileRepository.getList(limit);
     }
 
-    public ResponseEntity addFile(String filename, long size, byte[] byteArr) {
+    public String addFile(String filename, long size, byte[] byteArr) { //ResponseEntity <String>
         return fileRepository.addFile(filename, size, byteArr);
     }
 
-    public ResponseEntity changeName(String filename, String newName) {
+    public String changeName(String filename, String newName) {
         return fileRepository.changeName(filename, newName);
     }
 
-    public ResponseEntity deleteFile(String filename) {
+    public ResponseEntity <String> deleteFile(String filename) {
         return fileRepository.deleteFile(filename);
     }
 
-    public ResponseEntity getFile(String filename) throws IOException {
+    public ResponseEntity <Object> getFile(String filename) throws IOException {
         return fileRepository.getFile(filename);
     }
 }

@@ -16,3 +16,6 @@ create table if not exists myClSt.user(
     password varchar(255) NOT NULL,
     role varchar(255) NOT NULL,
     );
+
+insert into myClSt.user (login, password, role)
+values ('admin', 'admin', 'ADMIN');

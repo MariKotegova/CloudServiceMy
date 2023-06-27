@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.netology.mycloudstorage.dto.FileNameDTO;
 import ru.netology.mycloudstorage.modele.File;
 import ru.netology.mycloudstorage.repositopy.FileManager;
@@ -98,8 +99,10 @@ public class FileControllerTest {
                         new FileManager(), myFileRepository1)));
 
         HttpStatus testStatus1 = HttpStatus.BAD_REQUEST;
+        System.out.println("testStatus1" + testStatus1);
+       // HttpStatus status1 = testController1.changeName(oldName, fileName).getStatusCode();
         HttpStatus status1 = testController1.changeName(oldName, fileName).getStatusCode();
-
+        System.out.println("status1 " + status1);
         System.out.println("Ожидалось получить - " + status1 + "\nПолучено - " + testStatus1);
         Assertions.assertEquals(status1, testStatus1);
 

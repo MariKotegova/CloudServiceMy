@@ -2,6 +2,7 @@ package ru.netology.mycloudstorage.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,32 +24,42 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity getList(@RequestParam int limit) {
+    public ResponseEntity<Object> getList(@RequestParam int limit) {
         return fileService.getList(limit);
     }
 
     @PostMapping("/file")
     @Consumes(value = "multipart/form-data")
-    public ResponseEntity addFile(@RequestParam String filename, @RequestBody MultipartFile file) throws IOException {
+    //ResponseEntity<String>
+    public ResponseEntity<String> addFile(@RequestParam String filename, @RequestBody MultipartFile file) throws IOException {
         log.info("add file " + filename);
-        return fileService.addFile(filename, file.getSize(), file.getBytes());
+        String messages = fileService.addFile(filename, file.getSize(), file.getBytes());
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @PutMapping("/file")
     @Consumes(value = "application/json")
-    public ResponseEntity changeName(@RequestParam String filename, @RequestBody FileNameDTO newName) {
+    public ResponseEntity<String> changeName(@RequestParam String filename, @RequestBody FileNameDTO newName) {
         log.info("change name from " + filename + " to " + newName);
-        return fileService.changeName(filename, newName.getFilename());
+        String messages = fileService.changeName(filename, newName.getFilename());
+        //return fileService.changeName(filename, newName.getFilename());
+        if (messages.equals("Error input data")){
+            return ResponseEntity.status(400).body("Error input data");
+        }
+        if (messages.equals("Error upload file")){
+            return ResponseEntity.status(500).body("Error upload file");
+        }
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @DeleteMapping("/file")
-    public ResponseEntity deleteFile(@RequestParam String filename) {
+    public ResponseEntity<String> deleteFile(@RequestParam String filename) {
         log.info("delete file " + filename);
         return fileService.deleteFile(filename);
     }
 
     @GetMapping("/file")
-    public ResponseEntity get(@RequestParam String filename) throws IOException {
+    public ResponseEntity <Object> get(@RequestParam String filename) throws IOException {
         log.info("download file " + filename);
         return fileService.getFile(filename);
     }

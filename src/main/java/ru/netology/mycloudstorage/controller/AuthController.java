@@ -41,14 +41,14 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials", e);
         }
         String jwt = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
-        Map<String, Object> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("auth-token", jwt);
         log.info("input OK");
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout() {
+    public ResponseEntity<String> logout() {
         log.info("output OK");
         return ResponseEntity.ok("Success logout");
     }
