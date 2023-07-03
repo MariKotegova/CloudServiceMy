@@ -18,7 +18,7 @@ public class FileService {
         return fileRepository.getList(limit);
     }
 
-    public String addFile(String filename, long size, byte[] byteArr) { //ResponseEntity <String>
+    public String addFile(String filename, long size, byte[] byteArr) {
         return fileRepository.addFile(filename, size, byteArr);
     }
 
@@ -26,11 +26,11 @@ public class FileService {
         return fileRepository.changeName(filename, newName);
     }
 
-    public ResponseEntity <String> deleteFile(String filename) {
+    public String deleteFile(String filename) {
         return fileRepository.deleteFile(filename);
     }
 
-    public ResponseEntity <Object> getFile(String filename) throws IOException {
+    public Object getFile(String filename) throws IOException {
         return fileRepository.getFile(filename);
     }
 }

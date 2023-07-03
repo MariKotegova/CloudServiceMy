@@ -30,10 +30,16 @@ public class FileController {
 
     @PostMapping("/file")
     @Consumes(value = "multipart/form-data")
-    //ResponseEntity<String>
     public ResponseEntity<String> addFile(@RequestParam String filename, @RequestBody MultipartFile file) throws IOException {
         log.info("add file " + filename);
         String messages = fileService.addFile(filename, file.getSize(), file.getBytes());
+
+        if (messages.equals("Error input data")){
+            return ResponseEntity.status(400).body("Error input data");
+        }
+        if (messages.equals("Error adding file")){
+            return ResponseEntity.status(500).body("Error adding file");
+        }
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
@@ -42,7 +48,6 @@ public class FileController {
     public ResponseEntity<String> changeName(@RequestParam String filename, @RequestBody FileNameDTO newName) {
         log.info("change name from " + filename + " to " + newName);
         String messages = fileService.changeName(filename, newName.getFilename());
-        //return fileService.changeName(filename, newName.getFilename());
         if (messages.equals("Error input data")){
             return ResponseEntity.status(400).body("Error input data");
         }
@@ -55,13 +60,27 @@ public class FileController {
     @DeleteMapping("/file")
     public ResponseEntity<String> deleteFile(@RequestParam String filename) {
         log.info("delete file " + filename);
-        return fileService.deleteFile(filename);
+        String messages = fileService.deleteFile(filename);
+        if (messages.equals("Error input data")){
+            return ResponseEntity.status(400).body("Error input data");
+        }
+        if (messages.equals("Error delete file")){
+            return ResponseEntity.status(500).body("Error delete file");
+        }
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @GetMapping("/file")
     public ResponseEntity <Object> get(@RequestParam String filename) throws IOException {
         log.info("download file " + filename);
-        return fileService.getFile(filename);
+        Object messages = fileService.getFile(filename);
+        if (messages.equals("Error input data")){
+            return ResponseEntity.status(400).body("Error input data");
+        }
+        if (messages.equals("Error delete file")){
+            return ResponseEntity.status(500).body("Error delete file");
+        }
+        return ResponseEntity.ok(messages);
     }
 }
 
