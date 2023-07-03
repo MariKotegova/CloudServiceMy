@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 import ru.netology.mycloudstorage.dto.FileNameDTO;
 import ru.netology.mycloudstorage.modele.File;
 import ru.netology.mycloudstorage.repositopy.FileManager;
@@ -46,17 +48,22 @@ public class FileControllerTest {
         System.out.println("ТЕСТ ОТОБРАЖЕНИЯ СПИСКА ФАЙЛОВ");
         System.out.println("Тестирование OK");
         FileController controller1 = new FileController(fileService);
-        HttpStatus testStatus1 = controller1.getList(limit).getStatusCode();
+        HttpStatus status = controller1.getList(limit).getStatusCode();
         HttpStatus status1 = HttpStatus.OK;
-        System.out.println("Ожидалось получить - " + status1 + "\nПолучено - " + testStatus1);
-        Assertions.assertEquals(status1, testStatus1);
+        System.out.println("Ожидалось получить - " + status1 + "\nПолучено - " + status);
+        Assertions.assertEquals(status1, status);
 
         // BAD REQUEST
         System.out.println("\nТестирование BAD REQUEST");
-        HttpStatus testStatus2 = controller1.getList(wrongLimit).getStatusCode();
+        HttpStatus statusTest2 = null;
+        try {
+            statusTest2 = controller1.getList(wrongLimit).getStatusCode();
+        } catch (ResponseStatusException e){
+             statusTest2 = e.getStatus();
+        }
         HttpStatus status2 = HttpStatus.BAD_REQUEST;
-        System.out.println("Ожидалось получить - " + status2 + "\nПолучено - " + testStatus2);
-        Assertions.assertEquals(status2, testStatus2);
+        System.out.println("Ожидалось получить - " + status2 + "\nПолучено - " + statusTest2);
+        Assertions.assertEquals(status2, statusTest2);
 
         // INTERNAL_SERVER_ERROR
         System.out.println("\nТестирование INTERNAL_SERVER_ERROR");
@@ -73,11 +80,15 @@ public class FileControllerTest {
         FileRepositoryImpl fileRepository3 = new FileRepositoryImpl(new FileManager(), myFileRepository3);
         FileService fileService3 = new FileService(fileRepository3);
         FileController controller3 = new FileController(fileService3);
-
-        HttpStatus testStatus3 = controller3.getList(limit).getStatusCode();
+        HttpStatus statusTest3 = null;
+        try {
+            statusTest3 = controller3.getList(limit).getStatusCode();
+        } catch (ResponseStatusException e){
+            statusTest3 = e.getStatus();
+        }
         HttpStatus status3 = HttpStatus.INTERNAL_SERVER_ERROR;
-        System.out.println("Ожидалось получить - " + status3 + "\nПолучено - " + testStatus3);
-        Assertions.assertEquals(status3, testStatus3);
+        System.out.println("Ожидалось получить - " + status3 + "\nПолучено - " + statusTest3);
+        Assertions.assertEquals(status3, statusTest3);
     }
 
     @Test

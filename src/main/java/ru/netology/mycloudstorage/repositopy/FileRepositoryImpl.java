@@ -2,9 +2,11 @@ package ru.netology.mycloudstorage.repositopy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.netology.mycloudstorage.exeptions.ExceptionHandler;
 import ru.netology.mycloudstorage.exeptions.InternalServerException;
 import ru.netology.mycloudstorage.exeptions.MyNotFoundException;
@@ -31,15 +33,21 @@ public class FileRepositoryImpl {
         this.myFileRepository = myFileRepository;
     }
 
-    public ResponseEntity<Object> getList(int limit) {
+    //ResponseEntity<Object>
+    public List<File> getList(int limit) {
         List<File> list = myFileRepository.findAllByDeleted(NOT_DELETED);
         if (limit <= 0) {
-            return ResponseEntity.status(400).body("Error input data");
+            //400
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
+           // return ResponseEntity.status(400).body("Error input data");
         }
         if (list.size() > 3) {
-            return ResponseEntity.status(500).body("Error getting file list");
+            //500
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting file list");
+            //return ResponseEntity.status(500).body("Error getting file list");
         }
-        return ResponseEntity.status(200).body(list);
+        return list;
+        // return ResponseEntity.status(200).body(list);
     }
 
     @Transactional

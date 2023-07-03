@@ -25,7 +25,10 @@ public class FileController {
 
     @GetMapping("/list")
     public ResponseEntity<Object> getList(@RequestParam int limit) {
-        return fileService.getList(limit);
+
+        //return fileService.getList(limit);
+        //System.out.println(ResponseEntity.status(200).body(fileService.getList(limit)).getStatusCode());
+        return ResponseEntity.status(200).body(fileService.getList(limit));
     }
 
     @PostMapping("/file")

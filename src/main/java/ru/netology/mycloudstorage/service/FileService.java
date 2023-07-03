@@ -2,9 +2,11 @@ package ru.netology.mycloudstorage.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.netology.mycloudstorage.modele.File;
 import ru.netology.mycloudstorage.repositopy.FileRepositoryImpl;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -14,7 +16,7 @@ public class FileService {
         this.fileRepository = fileRepository;
     }
 
-    public ResponseEntity<Object> getList(int limit) {
+    public List<File> getList(int limit) {
         return fileRepository.getList(limit);
     }
 
