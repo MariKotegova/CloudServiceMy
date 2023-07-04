@@ -3,13 +3,9 @@ package ru.netology.mycloudstorage.repositopy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.netology.mycloudstorage.exeptions.ExceptionHandler;
-import ru.netology.mycloudstorage.exeptions.InternalServerException;
-import ru.netology.mycloudstorage.exeptions.MyNotFoundException;
 import ru.netology.mycloudstorage.modele.File;
 
 import javax.persistence.EntityManager;
@@ -33,29 +29,25 @@ public class FileRepositoryImpl {
         this.myFileRepository = myFileRepository;
     }
 
-    //ResponseEntity<Object>
     public List<File> getList(int limit) {
         List<File> list = myFileRepository.findAllByDeleted(NOT_DELETED);
         if (limit <= 0) {
             //400
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
-           // return ResponseEntity.status(400).body("Error input data");
         }
         if (list.size() > 3) {
             //500
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting file list");
-            //return ResponseEntity.status(500).body("Error getting file list");
         }
         return list;
-        // return ResponseEntity.status(200).body(list);
     }
 
     @Transactional
     public String addFile(String filename, long size, byte[] byteArr) {
         if (size <= 0 || byteArr.length == 0 || filename.length() == 0) {
             //400
-            return "Error input data";
-            }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
+        }
         File file = myFileRepository.findByFilenameAndDeleted(filename, NOT_DELETED);
         if (file == null) {
             File downloadFile = File.builder()
@@ -66,7 +58,7 @@ public class FileRepositoryImpl {
             entityManager.persist(downloadFile);
             if (downloadFile == null) {
                 //500
-                return "Error adding file";
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error adding file");
             }
             fileManager.createFile(filename, byteArr);
         }
@@ -78,12 +70,12 @@ public class FileRepositoryImpl {
         File file = myFileRepository.findByFilenameAndDeleted(oldName, NOT_DELETED);
         if (file == null) {
             //400
-            return "Error input data";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
         }
         String oldPath = file.getPath();
         if (!fileManager.changeName(newName, oldPath)) {
             //500
-            return "Error upload file";
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error upload file");
         }
         file.setFilename(newName);
         file.setPath(fileManager.getPrefixPath() + newName);
@@ -97,12 +89,12 @@ public class FileRepositoryImpl {
         File file = myFileRepository.findByFilenameAndDeleted(filename, NOT_DELETED);
         if (file == null) {
             //400
-            return "Error input data";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
         }
         String path = file.getPath();
         if (!fileManager.delete(filename, path)) {
             //500
-            return "Error delete file";
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error delete file");
         }
         int DELETED = 1;
         file.setDeleted(DELETED);
@@ -111,16 +103,18 @@ public class FileRepositoryImpl {
         return "Success deleted";
     }
 
-    public Object getFile(String filename) throws IOException {
+    public byte[] getFile(String filename) throws IOException {
         File file = myFileRepository.findByFilenameAndDeleted(filename, NOT_DELETED);
         if (file == null) {
             //400
-            return "Error input data";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
+            //return "Error input data";
         }
         byte[] fileBytes = fileManager.getFile(file);
         if (fileBytes.length == 0) {
             //500
-            return "Error upload file";
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error upload file");
+           // return "Error upload file";
         }
         return fileBytes;
     }

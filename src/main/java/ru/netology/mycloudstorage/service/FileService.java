@@ -32,7 +32,7 @@ public class FileService {
         return fileRepository.deleteFile(filename);
     }
 
-    public Object getFile(String filename) throws IOException {
+    public byte[] getFile(String filename) throws IOException {
         return fileRepository.getFile(filename);
     }
 }
