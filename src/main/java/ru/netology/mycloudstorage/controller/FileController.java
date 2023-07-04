@@ -52,15 +52,9 @@ public class FileController {
     }
 
     @GetMapping("/file")
-    public ResponseEntity <byte[]> get(@RequestParam String filename) throws IOException {
+    public ResponseEntity<byte[]> get(@RequestParam String filename) throws IOException {
         log.info("download file " + filename);
         byte[] messages = fileService.getFile(filename);
-      // if (messages.equals("Error input data")){
-      //     return ResponseEntity.status(400).body("Error input data");
-      // }
-      // if (messages.equals("Error delete file")){
-      //     return ResponseEntity.status(500).body("Error delete file");
-      // }
         return ResponseEntity.ok(messages);
     }
 }

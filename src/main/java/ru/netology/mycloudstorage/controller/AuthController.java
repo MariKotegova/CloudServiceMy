@@ -52,5 +52,4 @@ public class AuthController {
         log.info("output OK");
         return ResponseEntity.ok("Success logout");
     }
-
 }

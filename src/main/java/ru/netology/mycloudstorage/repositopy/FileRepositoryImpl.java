@@ -108,13 +108,11 @@ public class FileRepositoryImpl {
         if (file == null) {
             //400
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error input data");
-            //return "Error input data";
         }
         byte[] fileBytes = fileManager.getFile(file);
         if (fileBytes.length == 0) {
             //500
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error upload file");
-           // return "Error upload file";
         }
         return fileBytes;
     }
